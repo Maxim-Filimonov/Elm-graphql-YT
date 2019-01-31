@@ -1,0 +1,24 @@
+{
+  "name": "Elm-graphql-YT",
+  "version": "1.0.0",
+  "description": "https://ellie-app.com/jHFrhLpPzpa1 # YT to follow: https://youtu.be/memIRXFSNkU",
+  "main": "index.js",
+  "scripts": {
+    "start": "elm-live src/Main.elm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maxim-Filimonov/Elm-graphql-YT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Maxim-Filimonov/Elm-graphql-YT/issues"
+  },
+  "homepage": "https://github.com/Maxim-Filimonov/Elm-graphql-YT#readme",
+  "devDependencies": {
+    "elm": "^0.19.0-bugfix6",
+    "elm-live": "^3.4.0"
+  }
+}
