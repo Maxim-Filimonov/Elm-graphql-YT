@@ -4,6 +4,7 @@
   "description": "https://ellie-app.com/jHFrhLpPzpa1 # YT to follow: https://youtu.be/memIRXFSNkU",
   "main": "index.js",
   "scripts": {
+    "generate:graphql": "elm-graphql https://elm-graphql.herokuapp.com --base Swapi --output src",
     "start": "elm-live src/Main.elm"
   },
   "repository": {
@@ -19,6 +20,7 @@
   "homepage": "https://github.com/Maxim-Filimonov/Elm-graphql-YT#readme",
   "devDependencies": {
     "elm": "^0.19.0-bugfix6",
+    "elm-graphql": "^1.0.6",
     "elm-live": "^3.4.0"
   }
 }
