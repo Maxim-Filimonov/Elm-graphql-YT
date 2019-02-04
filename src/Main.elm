@@ -4,7 +4,8 @@ import Browser
 import Html exposing (text)
 
 
-view =
+view : OurModel -> Html.Html Msg
+view model =
     text "Hello"
 
 
@@ -12,20 +13,22 @@ type alias Msg =
     Int
 
 
-type alias Model =
+type alias OurModel =
     {}
 
 
-update : Msg -> Model -> Model
+update : Msg -> OurModel -> ( OurModel, Cmd Msg )
 update msg model =
-    model
+    ( model, Cmd.none )
 
 
-init =
+type alias Flags =
+    {}
+
+
+init : Flags -> ( OurModel, Cmd Msg )
+init flags =
     ( {}, Cmd.none )
-
-
-view : Model -> Html prog
 
 
 main =
