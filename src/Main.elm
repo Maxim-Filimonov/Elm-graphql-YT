@@ -13,9 +13,8 @@ import Swapi.Query as Query
 import Swapi.Scalar exposing (Id(..))
 
 
-view : OurModel -> Html.Html Msg
-view model =
-    case model.queryResult of
+renderQueryResult queryResult =
+    case queryResult of
         RemoteData.Loading ->
             text "Loading"
 
@@ -33,6 +32,11 @@ view model =
 
         RemoteData.NotAsked ->
             text "waiting for something"
+
+
+view : OurModel -> Html.Html Msg
+view model =
+    renderQueryResult model.queryResult
 
 
 type alias OurModel =

@@ -7081,13 +7081,12 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 };
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var author$project$Main$view = function (model) {
-	var _n0 = model.queryResult;
-	switch (_n0.$) {
+var author$project$Main$renderQueryResult = function (queryResult) {
+	switch (queryResult.$) {
 		case 'Loading':
 			return elm$html$Html$text('Loading');
 		case 'Success':
-			var response = _n0.a;
+			var response = queryResult.a;
 			if (response.$ === 'Just') {
 				var human = response.a;
 				return elm$html$Html$text(
@@ -7096,11 +7095,14 @@ var author$project$Main$view = function (model) {
 				return elm$html$Html$text('got nothing');
 			}
 		case 'Failure':
-			var error = _n0.a;
+			var error = queryResult.a;
 			return elm$html$Html$text('failed with error');
 		default:
 			return elm$html$Html$text('waiting for something');
 	}
+};
+var author$project$Main$view = function (model) {
+	return author$project$Main$renderQueryResult(model.queryResult);
 };
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
