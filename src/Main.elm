@@ -22,13 +22,14 @@ view model =
         RemoteData.Success response ->
             case response of
                 Just human ->
-                    text (human.name ++ " from " ++ Maybe.withDefault "nowhere" human.homePlanet)
+                    text <|
+                        renderHuman human
 
                 Nothing ->
                     text "got nothing"
 
-        RemoteData.Failure _ ->
-            text "faled"
+        RemoteData.Failure error ->
+            text "failed with error"
 
         RemoteData.NotAsked ->
             text "waiting for something"
@@ -79,6 +80,13 @@ type alias Human =
     { name : String
     , homePlanet : Maybe String
     }
+
+
+renderHuman : Human -> String
+renderHuman human =
+    human.name
+        ++ " from "
+        ++ Maybe.withDefault "nowhere" human.homePlanet
 
 
 type alias Response =

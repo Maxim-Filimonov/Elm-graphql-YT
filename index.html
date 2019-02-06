@@ -7057,6 +7057,9 @@ var author$project$Main$update = F2(
 				{queryResult: response}),
 			elm$core$Platform$Cmd$none);
 	});
+var author$project$Main$renderHuman = function (human) {
+	return human.name + (' from ' + A2(elm$core$Maybe$withDefault, 'nowhere', human.homePlanet));
+};
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -7081,12 +7084,13 @@ var author$project$Main$view = function (model) {
 			if (response.$ === 'Just') {
 				var human = response.a;
 				return elm$html$Html$text(
-					human.name + (' from ' + A2(elm$core$Maybe$withDefault, 'nowhere', human.homePlanet)));
+					author$project$Main$renderHuman(human));
 			} else {
 				return elm$html$Html$text('got nothing');
 			}
 		case 'Failure':
-			return elm$html$Html$text('faled');
+			var error = _n0.a;
+			return elm$html$Html$text('failed with error');
 		default:
 			return elm$html$Html$text('waiting for something');
 	}
