@@ -61,7 +61,7 @@ init flags =
 
 query : SelectionSet (Maybe Human) RootQuery
 query =
-    Query.human { id = Id "1002" } humanSelection
+    Query.human { id = Id "1001" } humanSelection
 
 
 
