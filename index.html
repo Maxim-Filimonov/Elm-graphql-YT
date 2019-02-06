@@ -5612,7 +5612,7 @@ var author$project$Swapi$Query$human = F2(
 var author$project$Main$query = A2(
 	author$project$Swapi$Query$human,
 	{
-		id: author$project$Swapi$Scalar$Id('1001')
+		id: author$project$Swapi$Scalar$Id('1002')
 	},
 	author$project$Main$humanSelection);
 var dillonkearns$elm_graphql$Graphql$Document$decoder = function (_n0) {
@@ -7058,7 +7058,14 @@ var author$project$Main$update = F2(
 			elm$core$Platform$Cmd$none);
 	});
 var author$project$Main$renderHuman = function (human) {
-	return human.name + (' from ' + A2(elm$core$Maybe$withDefault, 'nowhere', human.homePlanet));
+	var name = human.name;
+	var _n0 = human.homePlanet;
+	if (_n0.$ === 'Just') {
+		var homePlanet = _n0.a;
+		return name + (' from ' + homePlanet);
+	} else {
+		return name;
+	}
 };
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {

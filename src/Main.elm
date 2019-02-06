@@ -62,7 +62,8 @@ init flags =
 
 query : SelectionSet (Maybe Human) RootQuery
 query =
-    Query.human { id = Id "1001" } humanSelection
+    -- play with this id to see different results
+    Query.human { id = Id "1002" } humanSelection
 
 
 
@@ -84,9 +85,18 @@ type alias Human =
 
 renderHuman : Human -> String
 renderHuman human =
-    human.name
-        ++ " from "
-        ++ Maybe.withDefault "nowhere" human.homePlanet
+    let
+        name =
+            human.name
+    in
+    case human.homePlanet of
+        Just homePlanet ->
+            name
+                ++ " from "
+                ++ homePlanet
+
+        Nothing ->
+            name
 
 
 type alias Response =
