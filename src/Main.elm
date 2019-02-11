@@ -3,10 +3,12 @@ module Main exposing (Msg, main, update, view)
 import Browser
 import Graphql.Document as Document
 import Graphql.Http
-import Graphql.Operation exposing (RootQuery)
+import Graphql.Operation exposing (RootMutation, RootQuery)
 import Graphql.SelectionSet exposing (SelectionSet, with)
-import Html exposing (div, text)
+import Html exposing (button, div, text)
+import Html.Events exposing (onClick)
 import RemoteData
+import Swapi.Mutation as Mutation
 import Swapi.Object
 import Swapi.Object.Human as HumanGql
 import Swapi.Query as Query
@@ -36,19 +38,46 @@ renderQueryResult queryResult =
 
 view : OurModel -> Html.Html Msg
 view model =
-    renderQueryResult model.queryResult
+    div []
+        [ renderQueryResult model.queryResult
+        , button [ onClick Increment ] [ text "Click me" ]
+        , renderMutationResult model.mutationResult
+        ]
+
+
+renderMutationResult : RemoteUpdateModel -> Html.Html Msg
+renderMutationResult response =
+    case response of
+        RemoteData.Loading ->
+            text "Loading"
+
+        RemoteData.Success result ->
+            text ("Increment result is " ++ String.fromInt result)
+
+        RemoteData.Failure error ->
+            text "failed with error"
+
+        RemoteData.NotAsked ->
+            text "waiting for something"
 
 
 type alias OurModel =
     { queryResult : RemoteModel
+    , mutationResult : RemoteUpdateModel
     }
 
 
 update : Msg -> OurModel -> ( OurModel, Cmd Msg )
 update msg model =
     case msg of
-        GotResponse response ->
+        GotQueryResult response ->
             ( { model | queryResult = response }, Cmd.none )
+
+        GotMutationResult response ->
+            ( { model | mutationResult = response }, Cmd.none )
+
+        Increment ->
+            ( { model | mutationResult = RemoteData.Loading }, makeUpdateRequest )
 
 
 type alias Flags =
@@ -57,7 +86,7 @@ type alias Flags =
 
 init : Flags -> ( OurModel, Cmd Msg )
 init flags =
-    ( { queryResult = RemoteData.Loading }, makeRequest )
+    ( { queryResult = RemoteData.NotAsked, mutationResult = RemoteData.NotAsked }, makeRequest )
 
 
 
@@ -68,6 +97,22 @@ query : SelectionSet (Maybe Human) RootQuery
 query =
     -- play with this id to see different results
     Query.human { id = Id "1002" } humanSelection
+
+
+type alias MutationResponse =
+    Int
+
+
+mutation : SelectionSet MutationResponse RootMutation
+mutation =
+    Mutation.increment
+
+
+makeUpdateRequest : Cmd Msg
+makeUpdateRequest =
+    mutation
+        |> Graphql.Http.mutationRequest "https://elm-graphql.herokuapp.com"
+        |> Graphql.Http.send (RemoteData.fromResult >> GotMutationResult)
 
 
 
@@ -111,8 +156,14 @@ type alias RemoteModel =
     RemoteData.RemoteData (Graphql.Http.Error Response) Response
 
 
+type alias RemoteUpdateModel =
+    RemoteData.RemoteData (Graphql.Http.Error MutationResponse) MutationResponse
+
+
 type Msg
-    = GotResponse RemoteModel
+    = GotQueryResult RemoteModel
+    | GotMutationResult RemoteUpdateModel
+    | Increment
 
 
 makeRequest : Cmd Msg
@@ -120,7 +171,7 @@ makeRequest =
     query
         |> Graphql.Http.queryRequest
             "https://graphqelm.herokuapp.com/api"
-        |> Graphql.Http.send (RemoteData.fromResult >> GotResponse)
+        |> Graphql.Http.send (RemoteData.fromResult >> GotQueryResult)
 
 
 

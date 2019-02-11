@@ -4650,8 +4650,8 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Main$GotResponse = function (a) {
-	return {$: 'GotResponse', a: a};
+var author$project$Main$GotQueryResult = function (a) {
+	return {$: 'GotQueryResult', a: a};
 };
 var author$project$Main$Human = F2(
 	function (name, homePlanet) {
@@ -7038,35 +7038,68 @@ var krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 };
 var author$project$Main$makeRequest = A2(
 	dillonkearns$elm_graphql$Graphql$Http$send,
-	A2(elm$core$Basics$composeR, krisajenkins$remotedata$RemoteData$fromResult, author$project$Main$GotResponse),
+	A2(elm$core$Basics$composeR, krisajenkins$remotedata$RemoteData$fromResult, author$project$Main$GotQueryResult),
 	A2(dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'https://graphqelm.herokuapp.com/api', author$project$Main$query));
-var krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
+var krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
 var author$project$Main$init = function (flags) {
 	return _Utils_Tuple2(
-		{queryResult: krisajenkins$remotedata$RemoteData$Loading},
+		{mutationResult: krisajenkins$remotedata$RemoteData$NotAsked, queryResult: krisajenkins$remotedata$RemoteData$NotAsked},
 		author$project$Main$makeRequest);
 };
+var author$project$Main$GotMutationResult = function (a) {
+	return {$: 'GotMutationResult', a: a};
+};
+var author$project$Swapi$Mutation$increment = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Int', 'increment', _List_Nil, elm$json$Json$Decode$int);
+var author$project$Main$mutation = author$project$Swapi$Mutation$increment;
+var dillonkearns$elm_graphql$Graphql$Http$Mutation = function (a) {
+	return {$: 'Mutation', a: a};
+};
+var dillonkearns$elm_graphql$Graphql$Http$mutationRequest = F2(
+	function (baseUrl, mutationSelectionSet) {
+		return dillonkearns$elm_graphql$Graphql$Http$Request(
+			{
+				baseUrl: baseUrl,
+				details: dillonkearns$elm_graphql$Graphql$Http$Mutation(mutationSelectionSet),
+				expect: dillonkearns$elm_graphql$Graphql$Document$decoder(mutationSelectionSet),
+				headers: _List_Nil,
+				queryParams: _List_Nil,
+				timeout: elm$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var author$project$Main$makeUpdateRequest = A2(
+	dillonkearns$elm_graphql$Graphql$Http$send,
+	A2(elm$core$Basics$composeR, krisajenkins$remotedata$RemoteData$fromResult, author$project$Main$GotMutationResult),
+	A2(dillonkearns$elm_graphql$Graphql$Http$mutationRequest, 'https://elm-graphql.herokuapp.com', author$project$Main$mutation));
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
+var krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
 var author$project$Main$update = F2(
 	function (msg, model) {
-		var response = msg.a;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{queryResult: response}),
-			elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'GotQueryResult':
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{queryResult: response}),
+					elm$core$Platform$Cmd$none);
+			case 'GotMutationResult':
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{mutationResult: response}),
+					elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{mutationResult: krisajenkins$remotedata$RemoteData$Loading}),
+					author$project$Main$makeUpdateRequest);
+		}
 	});
-var author$project$Main$renderHuman = function (human) {
-	var name = human.name;
-	var _n0 = human.homePlanet;
-	if (_n0.$ === 'Just') {
-		var homePlanet = _n0.a;
-		return name + (' from ' + homePlanet);
-	} else {
-		return name;
-	}
-};
+var author$project$Main$Increment = {$: 'Increment'};
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -7081,6 +7114,31 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 };
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var author$project$Main$renderMutationResult = function (response) {
+	switch (response.$) {
+		case 'Loading':
+			return elm$html$Html$text('Loading');
+		case 'Success':
+			var result = response.a;
+			return elm$html$Html$text(
+				'Increment result is ' + elm$core$String$fromInt(result));
+		case 'Failure':
+			var error = response.a;
+			return elm$html$Html$text('failed with error');
+		default:
+			return elm$html$Html$text('waiting for something');
+	}
+};
+var author$project$Main$renderHuman = function (human) {
+	var name = human.name;
+	var _n0 = human.homePlanet;
+	if (_n0.$ === 'Just') {
+		var homePlanet = _n0.a;
+		return name + (' from ' + homePlanet);
+	} else {
+		return name;
+	}
+};
 var author$project$Main$renderQueryResult = function (queryResult) {
 	switch (queryResult.$) {
 		case 'Loading':
@@ -7101,8 +7159,44 @@ var author$project$Main$renderQueryResult = function (queryResult) {
 			return elm$html$Html$text('waiting for something');
 	}
 };
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var author$project$Main$view = function (model) {
-	return author$project$Main$renderQueryResult(model.queryResult);
+	return A2(
+		elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				author$project$Main$renderQueryResult(model.queryResult),
+				A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Main$Increment)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Click me')
+					])),
+				author$project$Main$renderMutationResult(model.mutationResult)
+			]));
 };
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
